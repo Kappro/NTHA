@@ -51,6 +51,14 @@ export default function MapCreator() {
           const map = mapRef.current!;
           const sourceId = "search-result";
 
+          if (markers.current!.length > 0) {
+            // remove all previous markers
+            for (const m of markers.current!) {
+              m.remove();
+            }
+            markers.current! = [];
+          }
+
           if (map.getSource(sourceId)) {
             (map.getSource(sourceId) as any).setData(fc);
           } else {
@@ -147,11 +155,13 @@ export default function MapCreator() {
             map.addSource(fsqSourceId, { type: "geojson", data: recfc });
           }
 
-          // remove all previous markers
-          for (const m of markers.current!) {
-            m.remove();
+          if (markers.current!.length > 0) {
+            // remove all previous markers
+            for (const m of markers.current!) {
+              m.remove();
+            }
+            markers.current! = [];
           }
-          markers.current! = [];
           for (const f of recfc.features) {
             const marker = new maplibregl.Marker()
                 .setLngLat((f.geometry as any).coordinates)
