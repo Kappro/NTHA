@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Map + Chat — Vercel AI SDK v5 + MapLibre + Nominatim (tool calling)
 
-## Getting Started
+This is a minimal scaffold to satisfy your assignment:
 
-First, run the development server:
+- **Part 1:** Uses the Vercel **AI SDK v5** with the **OpenAI provider** and streams responses.
+- **Part 2:** Renders a **MapLibre** map as the main panel with a chat panel.
+- **Part 3:** Calls **OpenAI gpt-5-mini** (server-side only) using the key from `.env.local`.
+- **Part 4:** Implements **tool calling** to query **Nominatim** and pushes returned **GeoJSON** onto the map.
+- **Bonus 2:** Streaming output to the UI via AI SDK's data streams.
+
+## Quickstart
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm i   # or npm i / yarn
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000 and try prompts like:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- "Find Gangnam-gu, Seoul and draw it on the map"
+- "Show Central Park polygon"
+- "Locate Busan"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Notes
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Keys are **never** sent to the browser. The `/api/chat` route runs on the **Edge runtime** and reads `OPENAI_API_KEY`.
+- The Nominatim tool sets a **User-Agent** header. For production, set `APP_USER_AGENT` to a contact email/domain and add caching/rate limiting.
+- The map style uses MapLibre **demo tiles** (no key). Swap to a provider when needed.
+- The chat UI listens for **tool results** and dispatches a `window` event `add-geojson` which the Map component consumes.
+- Keep `maxSteps` in sync on **client and server** to ensure tools run consistently.
