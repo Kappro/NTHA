@@ -1,6 +1,7 @@
 // app/api/map/route.ts
 import { NextResponse } from "next/server";
 
+// Sends API requests to MapTiler through the server-side instead of client-side.
 export async function GET() {
     const apiKey = process.env.MAPTILER_API_KEY; // Store in .env.local
     const url = `https://api.maptiler.com/maps/basic-v2/style.json?key=${apiKey}`;

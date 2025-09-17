@@ -8,26 +8,37 @@ import {DefaultChatTransport} from "ai";
 
 type ToolPart =
     | {
-    type: string; /* e.g. 'tool-nominatimSearch' or 'dynamic-tool' */
-    state?: string;
-    input?: any;
-    output?: any;
+    type: string; // Starts with 'tool-' or 'text-'
+    state?: string; // For tools to report their state
+    input?: any; // For tools
+    output?: any; // For tools
     toolName?: string;
     toolCallId?: string;
 }
     | any;
 
 export default function Chat() {
+    // record of processed tool calls using their IDs
     const processedIds = useRef<Set<string>>(new Set());
+    // use of Vercel's AI SDK
     const {messages, sendMessage, status, stop} = useChat({
         transport: new DefaultChatTransport({
             api: '/api/chat',
-        })
+        }),
+        messages: [
+            {
+                id: 'welcome',
+                role: 'assistant',
+                parts: [{ type: 'text', text: 'Hi, I am MapChat! I can find places for you, or even recommend some places to you, then display them on the map behind me! Let me know how I can help you today :)' }],
+            },
+        ],
     });
+    // represents if chatbot is in thought or trying to send their message to UI
     const isLoading = status === "streaming" || status === "submitted";
+    // for form purposes
     const [input, setInput] = useState("");
 
-    // states and refs used for pop-up button
+    // states and refs used for pop-up button, as well as moving and resizing capabilities of said button and the pop-up
     const [isOpen, setIsOpen] = useState(false);
     const [position, setPosition] = useState({
         x: 20,
@@ -56,19 +67,20 @@ export default function Chat() {
                 const state = part.state || part.toolInvocation?.state;
                 const output = part.output ?? part.toolInvocation?.result;
                 const callId = part.toolCallId ?? part.toolInvocation?.toolCallId ?? `${m.id}-${type}`;
+                // this will detect if a tool has completed its execution
                 if (state && state.includes("output") && output && !processedIds.current.has(callId)) {
                     processedIds.current.add(callId);
                     try {
                         // Expect { ok: true, data: <FeatureCollection> } from our tool
                         if (output.ok && output.data && output.data.type === "FeatureCollection") {
-                            window.dispatchEvent(new CustomEvent("add-geojson", {detail: output.data}));
+                            if (output.source === "nominatim") window.dispatchEvent(new CustomEvent("nominatim-tool-complete", {detail: output.data}));
+                            else window.dispatchEvent(new CustomEvent("fsq-tool-complete", {detail: output.data}));
                         }
                     } catch {
                     }
                 }
             }
         }
-        console.log(messages);
     }, [messages]);
 
     // the following are styling useEffects and event handlers
@@ -307,15 +319,19 @@ export default function Chat() {
                                             m.parts.map((p: any, i: number) => {
                                                 if (p.type === "text") return <div key={i}>{p.text}</div>;
                                                 if ((p.type?.startsWith?.("tool-") || p.type === "dynamic-tool")) {
-                                                    const tn = p.type === "dynamic-tool" ? (p.toolName ?? "tool") : p.type.replace("tool-", "");
                                                     return (
                                                         <div key={i}>
-                                                            <div className="badge">tool: {tn} ({p.state})</div>
-                                                            {p.state?.includes("result") && p.output?.ok === false && (
-                                                                <div>Tool error: {p.output.error}</div>
+                                                            {p.state?.includes("input-available") && p.toolName && p.toolName.includes("nominatimSearch") && (
+                                                                <div className="text-xs font-light">Finding the location...</div>
                                                             )}
-                                                            {p.state?.includes("result") && p.output?.ok && p.output?.data?.type === "FeatureCollection" && (
-                                                                <div>Added {p.output.data.features.length} feature(s) to map.</div>
+                                                            {p.state?.includes("input-available") && p.toolName && p.toolName.includes("foursquareSearch") && (
+                                                                <div className="text-xs font-light">Finding the recommendations...</div>
+                                                            )}
+                                                            {p.state?.includes("error") && p.output?.ok === false && (
+                                                                <div className="text-xs font-light text-red-500">Tool error: {p.output.error}</div>
+                                                            )}
+                                                            {p.state?.includes("output-available") && p.output?.ok && p.output?.data?.type === "FeatureCollection" && (
+                                                                <div className="text-xs font-light">Found and added {p.output.data.features.length} locations to map!</div>
                                                             )}
                                                         </div>
                                                     );
@@ -324,6 +340,9 @@ export default function Chat() {
                                             })
                                         ) : (
                                             <div>{(m as any).content || ""}</div>
+                                        )}
+                                        {m.role === "assistant" && status === "submitted" && (
+                                            <div className="text-xs font-light">Thinking...</div>
                                         )}
                                     </div>
                                 ))}
@@ -340,7 +359,7 @@ export default function Chat() {
                                 <input
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Ask about a place, e.g. 'Show me Raffles Place'..."
+                                    placeholder="Ask about a place or for recommendations..."
                                     aria-label="Message"
                                 />
                                 <button type="submit" disabled={isLoading}>

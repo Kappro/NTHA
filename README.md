@@ -1,12 +1,9 @@
-# Map + Chat — Vercel AI SDK v5 + MapLibre + Nominatim (tool calling)
+# MapChat
 
-This is a minimal scaffold to satisfy your assignment:
+## Introduction
+Welcome to MapChat! This smart GPT-powered chatbot is able to locate the places you want and mark them out on the map.
 
-- **Part 1:** Uses the Vercel **AI SDK v5** with the **OpenAI provider** and streams responses.
-- **Part 2:** Renders a **MapLibre** map as the main panel with a chat panel.
-- **Part 3:** Calls **OpenAI gpt-5-mini** (server-side only) using the key from `.env.local`.
-- **Part 4:** Implements **tool calling** to query **Nominatim** and pushes returned **GeoJSON** onto the map.
-- **Bonus 2:** Streaming output to the UI via AI SDK's data streams.
+In addition, it is able to recommend places near your desired location so that you can find places that you desire!
 
 ## Quickstart
 
@@ -15,16 +12,23 @@ pnpm i   # or npm i / yarn
 pnpm dev
 ```
 
-Then open http://localhost:3000 and try prompts like:
+## Usage
+The floating button with a text icon opens the chatbot window. Then, talk to the chatbot using prompts like the following:
 
 - "Find Gangnam-gu, Seoul and draw it on the map"
 - "Show Central Park polygon"
 - "Locate Busan"
+- "Recommend me some places to eat near Jurong Point"
 
-## Notes
+You can move the chatbot window as well as the button around to prevent blocking any parts of the map!
 
-- Keys are **never** sent to the browser. The `/api/chat` route runs on the **Edge runtime** and reads `OPENAI_API_KEY`.
-- The Nominatim tool sets a **User-Agent** header. For production, set `APP_USER_AGENT` to a contact email/domain and add caching/rate limiting.
-- The map style uses MapLibre **demo tiles** (no key). Swap to a provider when needed.
-- The chat UI listens for **tool results** and dispatches a `window` event `add-geojson` which the Map component consumes.
-- Keep `maxSteps` in sync on **client and server** to ensure tools run consistently.
+## Tech Stack and Attributions
+This application uses **NextJS**, together with [**Vercel's AI SDK**](https://ai-sdk.dev/docs/introduction).
+
+The map engine is [**MapLibre GL**](https://maplibre.org/maplibre-gl-js/docs/),
+and the map tiles are obtained from [**MapTiler**](https://www.maptiler.com/cloud/).
+
+The chatbot is powered by none other than [**OpenAI**](https://openai.com/index/openai-api/).
+
+The location search tool used is [**Nominatim Search**](https://nominatim.org/release-docs/latest/api/Search/),
+while the recommendation tool uses [**Foursquare**](https://foursquare.com/developer/) to find nearby locations.

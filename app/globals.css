@@ -15,7 +15,7 @@ body { background: var(--bg); color: var(--text); }
 .form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #1e293b; }
 .form input { flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #0b1220; color: var(--text); }
 .form button { padding: 10px 12px; border-radius: 8px; border: 1px solid #334155; background: #0b1220; color: var(--text); cursor: pointer; }
-.badge { font-size: 11px; color: var(--muted); }
+.badge { font-size: 15px; color: var(--muted); }
 
 .map-container {
     height: 100vh;
@@ -98,4 +98,19 @@ body { background: var(--bg); color: var(--text); }
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.maplibregl-popup {
+    max-width: 400px;
+    font: 12px/20px system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    color: var(--text);
+
+    .maplibregl-popup-tip {
+        border-top-color: var(--panel);
+        border-bottom-color: var(--panel);
+    }
+    .maplibregl-popup-content {
+        background-color: var(--panel);
+        border-color: var(--panel);
+    }
 }
