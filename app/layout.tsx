@@ -1,4 +1,4 @@
-export const metadata = { title: "Nika THA", description: "A location intelligence chatbot that displays different locations on map as recommendation for Nika employees." };
+export const metadata = { title: "MapChat", description: "A location intelligence chatbot that can find locations or recommend places and mark them on the map." };
 import "./globals.css";
 import React from "react";
 
