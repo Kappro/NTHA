@@ -10,6 +10,7 @@ export default function MapCreator() {
 
   useEffect(() => {
     if (mapRef.current) return;
+    if (!env.MAPTILER_API_KEY) throw new Error("MAPTILER_API_KEY is not found");
     const map = new maplibregl.Map({
       container: containerRef.current as HTMLDivElement,
       style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${env.MAPTILER_API_KEY}`,
