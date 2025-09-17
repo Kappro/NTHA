@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { Feature, FeatureCollection, Geometry, Position } from "geojson";
 import {tool} from "ai";
 import { nominatimSearchTool } from "./nominatim";
-import {env} from "../env";
 
 // --- Simple in-memory TTL cache for geocoding fallbacks ---
 // NOTE: In serverless, consider Vercel KV/Upstash Redis for durability.
@@ -169,7 +168,7 @@ async function geocodeAddressWithCache(address: string, near?: { lat: number; ln
         params.set("viewbox", `${near.lng - d},${near.lat + d},${near.lng + d},${near.lat - d}`);
         params.set("bounded", "1");
     }
-    const ua = env.APP_USER_AGENT ?? "MapChat/0.1 (+no-email-provided)";
+    const ua = process.env.APP_USER_AGENT ?? "MapChat/0.1 (+no-email-provided)";
     const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
         headers: { "User-Agent": ua },
     });
@@ -192,7 +191,7 @@ export const tripAdvisorByPlaceTool = tool({
     }),
     // Server-side only; do not expose keys
     execute: async ({ place, category, radiusKm }) => {
-        if (!env.TRIPADVISOR_API_KEY) {
+        if (!process.env.TRIPADVISOR_API_KEY) {
             return { ok: false, error: "Missing TRIPADVISOR_API_KEY (server env var)" };
         }
 
@@ -224,7 +223,7 @@ export const tripAdvisorByPlaceTool = tool({
 
         // 2) Query TripAdvisor nearby_search centered on centroid
         const params = new URLSearchParams({
-            key: env.TRIPADVISOR_API_KEY!,
+            key: process.env.TRIPADVISOR_API_KEY!,
             latLong: `${center.lat}%2C${center.lng}`, // TripAdvisor expects "lat,lon"
             category,
             radius: String(radiusKm),
