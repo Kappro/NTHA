@@ -313,8 +313,8 @@ export default function Chat() {
                             </div>
                             <div className="messages custom-scrollbar" id="messages">
                                 {messages.map((m) => (
-                                    <div key={m.id} className={`msg ${m.role === "user" ? "user" : "assistant"}`}>
-                                        <div className="badge">{m.role === "user" ? "You" : "MapChat"}</div>
+                                    <div key={m.id} className={`msg ${(m.role as string) === "user" ? "user" : "assistant"}`}>
+                                        <div className="badge">{(m.role as string) === "user" ? "You" : "MapChat"}</div>
                                         {"parts" in m && Array.isArray(m.parts) ? (
                                             m.parts.map((p: any, i: number) => {
                                                 if (p.type === "text") return <div key={i}>{p.text}</div>;
