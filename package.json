@@ -11,7 +11,7 @@
   "dependencies": {
     "@ai-sdk/openai": "latest",
     "@ai-sdk/react": "latest",
-    "@api/fsq-developers-places": "file:.api/apis/fsq-developers-places",
+    "@api/fsq-developers-places": "latest",
     "@next/env": "^15.5.3",
     "@tailwindcss/postcss": "^4.1.13",
     "ai": "latest",
