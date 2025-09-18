@@ -49,7 +49,7 @@ function centroid(g: Geometry | undefined | null): [number, number] | null {
 // Tool to be used by the chatbot for finding recommendations near a place.
 export const foursquareByPlaceTool = tool({
     description:
-        "Resolve a place name to a centroid (via Nominatim) then search Foursquare for nearby POIs (restaurants, hotels, attractions). Returns GeoJSON FeatureCollection, which includes recommendation as Points and search center as any kind of feature based on Nominatim search.",
+        "Resolve a place name to a centroid (via Nominatim) then search Foursquare for nearby POIs (restaurants, hotels, attractions). Only able to filter by distance to search center and by rating. Returns GeoJSON FeatureCollection, which includes recommendation as Points and search center as any kind of feature based on Nominatim search.",
     inputSchema: z.object({
         place: z.string().min(2),                // e.g. "Gangnam-gu, Seoul"
         query: z.string().default("restaurants"),// free text like "restaurants", "coffee", "hotels"

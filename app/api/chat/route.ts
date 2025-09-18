@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 // System prompt nudges the model toward using the correct search tool for the respective query
 const SYSTEM = `You are MapChat.
 - If the user wants only to find a location, use only "nominatimSearch".
-- If prompted by the user for recommendations of hotels/restaurants/attractions near a named place, use only "foursquareByPlace". After using this tool, you can remind the user that they can click on the markers for more details.
+- If prompted by the user for recommendations of hotels/restaurants/attractions near a named place, use only "foursquareByPlace". This tool only has filter options by minimum rating and distance to the search center. After using this tool, you can remind the user that they can click on the markers for more details.
 After any tool call, summarize briefly.`;
 
 // Sends API requests to OpenAI through the server-side instead of client-side.
