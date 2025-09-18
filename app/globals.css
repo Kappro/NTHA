@@ -106,8 +106,7 @@ body { background: var(--bg); color: var(--text); }
     color: var(--text);
 
     .maplibregl-popup-tip {
-        border-top-color: var(--panel);
-        border-bottom-color: var(--panel);
+        border-color: var(--panel);
     }
     .maplibregl-popup-content {
         background-color: var(--panel);
